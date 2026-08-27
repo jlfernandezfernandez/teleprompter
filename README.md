@@ -1,15 +1,18 @@
-# Teleprompter para presentaciones
+# Teleprompter
 
-Teleprompter sencillo, editable y sin backend para acompañar presentaciones sin perder el contacto visual con la audiencia.
+**Habla con naturalidad. Tu discurso, siempre a la altura de la mirada.**
 
-El texto permanece en el dispositivo y la aplicación funciona completamente en el navegador. No utiliza cuentas, servidores ni servicios externos.
+Un teleprompter web rápido y sin distracciones. Pega o edita tu guion, adapta la lectura a tu ritmo y entra en pantalla completa. No requiere cuentas, no envía el texto a ningún servidor y recuerda tu discurso en el navegador.
 
-**[Abrir el teleprompter](https://jlfernandezfernandez.github.io/teleprompter-presentaciones/)**
+**[Abrir Teleprompter](https://jlfernandezfernandez.github.io/teleprompter/)**
+
+![Teleprompter en funcionamiento](docs/teleprompter-preview.png)
 
 ## Funciones
 
 - Texto grande con ancho de lectura cómodo.
 - Scroll automático opcional con reproducción y pausa.
+- Tiempo restante estimado y progreso de lectura.
 - Velocidad y tamaño de letra ajustables.
 - Ancho de lectura y espaciado entre líneas ajustables.
 - Temas automático, claro y oscuro.
@@ -31,8 +34,8 @@ El proyecto usa [Svelte](https://svelte.dev/), [Vite](https://vite.dev/) y TypeS
 ## Ejecutar en local
 
 ```bash
-git clone https://github.com/jlfernandezfernandez/teleprompter-presentaciones.git
-cd teleprompter-presentaciones
+git clone https://github.com/jlfernandezfernandez/teleprompter.git
+cd teleprompter
 pnpm install
 pnpm dev
 ```

@@ -24,6 +24,9 @@
   let moreOpen = false;
   let theme: Theme = 'system';
   let editing = false;
+  let progress = 0;
+  let remainingSeconds = 0;
+  let hideTimer: number | undefined;
 
   const paragraphs = () => text.split(/\n\s*\n/).filter(Boolean);
   const isCue = (value: string) => /^\[.*\]$/.test(value.trim());
@@ -50,7 +53,8 @@
           carry += ((now - previous) / 1000) * (10 + speed * 14);
           const pixels = Math.floor(carry);
           if (pixels) { reader.scrollTop += pixels; carry -= pixels; }
-          if (reader.scrollTop + reader.clientHeight >= reader.scrollHeight - 2) playing = false;
+          updateProgress();
+          if (reader.scrollTop + reader.clientHeight >= reader.scrollHeight - 2) { playing = false; showControls(); }
         }
         previous = now;
       } else { previous = 0; }
@@ -61,20 +65,57 @@
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') { editing = false; closePopovers(); return; }
       if (editing) return;
-      if (event.code === 'Space') { event.preventDefault(); playing = !playing; closePopovers(); }
+      if (event.code === 'Space') { event.preventDefault(); togglePlayback(); }
       else if (event.key.toLowerCase() === 'h') controlsHidden = !controlsHidden;
       else if (event.key.toLowerCase() === 'f') toggleFullscreen();
       else if (event.key === 'Home') { event.preventDefault(); reset(); }
       else if (event.key === 'ArrowDown') { event.preventDefault(); move(innerHeight * .18); }
       else if (event.key === 'ArrowUp') { event.preventDefault(); move(-innerHeight * .18); }
     };
+    const revealControls = () => showControlsTemporarily();
     document.addEventListener('keydown', onKey);
-    return () => { cancelAnimationFrame(frame); document.removeEventListener('keydown', onKey); };
+    document.addEventListener('pointermove', revealControls);
+    document.addEventListener('touchstart', revealControls, { passive: true });
+    requestAnimationFrame(updateProgress);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.clearTimeout(hideTimer);
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('pointermove', revealControls);
+      document.removeEventListener('touchstart', revealControls);
+    };
   });
+
+  function updateProgress() {
+    if (!reader) return;
+    const distance = Math.max(0, reader.scrollHeight - reader.clientHeight);
+    progress = distance ? Math.min(1, Math.max(0, reader.scrollTop / distance)) : 0;
+    remainingSeconds = Math.round(Math.max(0, distance - reader.scrollTop) / (10 + speed * 14));
+  }
+  function formatTime(seconds: number) {
+    const minutes = Math.floor(seconds / 60);
+    return `${minutes}:${String(seconds % 60).padStart(2, '0')}`;
+  }
+  function showControls() {
+    controlsHidden = false;
+    window.clearTimeout(hideTimer);
+  }
+  function showControlsTemporarily() {
+    showControls();
+    if (playing && !editing && !settingsOpen && !moreOpen) {
+      hideTimer = window.setTimeout(() => controlsHidden = true, 3000);
+    }
+  }
+  function togglePlayback() {
+    playing = !playing;
+    closePopovers();
+    if (playing) showControlsTemporarily(); else showControls();
+  }
 
   function changeSpeed(delta: number) {
     speed = Math.min(3, Math.max(.25, Math.round((speed + delta) * 4) / 4));
     localStorage.setItem(KEYS.speed, String(speed));
+    updateProgress();
   }
   function changeFont(delta: number) {
     fontSize = Math.min(76, Math.max(28, fontSize + delta));
@@ -113,10 +154,12 @@
   }
   function move(amount: number) {
     playing = false;
+    showControls();
     reader.scrollBy({ top: amount, behavior: 'smooth' });
   }
   function reset() {
     playing = false;
+    showControls();
     reader.scrollTo({ top: 0, behavior: 'smooth' });
   }
   function openEditor() {
@@ -135,10 +178,10 @@
   }
 </script>
 
-<svelte:head><title>Teleprompter de presentación</title></svelte:head>
+<svelte:head><title>Teleprompter — Presenta con naturalidad</title></svelte:head>
 
 <main class:controls-hidden={controlsHidden}>
-  <div class="reader" bind:this={reader} role="region" aria-label="Texto del teleprompter" onwheel={() => playing = false} ontouchstart={() => playing = false}>
+  <div class="reader" bind:this={reader} role="region" aria-label="Texto del teleprompter" onscroll={updateProgress} onwheel={() => { playing = false; showControls(); }} ontouchstart={() => playing = false}>
     <article class="script" style:font-size={`${fontSize}px`} style:max-width={`${readerWidth}px`} style:line-height={lineHeight}>
       {#each paragraphs() as paragraph}
         <p class:cue={isCue(paragraph)}>
@@ -152,6 +195,8 @@
   <div class="shade top" aria-hidden="true"></div>
   <div class="shade bottom" aria-hidden="true"></div>
   <div class="hint">Espacio: reproducir/pausar · ↑↓: navegar · H: ocultar · F: pantalla completa</div>
+  <output class="time-remaining" aria-live="off">~{formatTime(remainingSeconds)} restantes</output>
+  <div class="reading-progress" aria-hidden="true"><span style:width={`${progress * 100}%`}></span></div>
 
   {#if settingsOpen || moreOpen}
     <button class="popover-dismiss" aria-label="Cerrar menú" onclick={closePopovers}></button>
@@ -193,10 +238,10 @@
   {/if}
 
   <nav class="toolbar" aria-label="Controles del teleprompter">
-    <div class="group play-group"><button class="btn primary" class:active={playing} aria-pressed={playing} onclick={() => playing = !playing}><span aria-hidden="true">{playing ? 'Ⅱ' : '▶'}</span><span class="play-label">{playing ? 'Pausa' : 'Iniciar'}</span></button></div>
+    <div class="group play-group"><button class="btn primary" class:active={playing} aria-label={playing ? 'Pausar desplazamiento' : 'Iniciar desplazamiento'} aria-pressed={playing} onclick={togglePlayback}>{#if playing}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14M15 5v14" /></svg>{:else}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7Z" /></svg>{/if}<span class="play-label">{playing ? 'Pausa' : 'Iniciar'}</span></button></div>
     <div class="group"><button class="btn" aria-label="Más lento" onclick={() => changeSpeed(-.25)}>−</button><span class="value">{speed}×</span><button class="btn" aria-label="Más rápido" onclick={() => changeSpeed(.25)}>+</button></div>
     <div class="group font-controls"><button class="btn text-size" aria-label="Reducir tamaño del texto" onclick={() => changeFont(-2)}>A−</button><span class="value font-value">{fontSize}</span><button class="btn text-size" aria-label="Aumentar tamaño del texto" onclick={() => changeFont(2)}>A+</button></div>
-    <div class="group actions"><button class="btn icon-action sliders" class:active={settingsOpen} aria-label="Ajustes de lectura" title="Ajustes de lectura" aria-expanded={settingsOpen} aria-controls="reading-settings" onclick={toggleSettings}>☷</button><button class="btn icon-action fullscreen-action" aria-label="Pantalla completa" title="Pantalla completa (F)" onclick={toggleFullscreen}>⛶</button><button class="btn icon-action more-action" class:active={moreOpen} aria-label="Más opciones" title="Más opciones" aria-expanded={moreOpen} aria-controls="more-options" onclick={toggleMore}>•••</button></div>
+    <div class="group actions"><button class="btn icon-action" class:active={settingsOpen} aria-label="Ajustes de lectura" title="Ajustes de lectura" aria-expanded={settingsOpen} aria-controls="reading-settings" onclick={toggleSettings}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h5M15 6h5M4 12h9M19 12h1M4 18h2M12 18h8"/><circle cx="12" cy="6" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="9" cy="18" r="2"/></svg></button><button class="btn icon-action fullscreen-action" aria-label="Pantalla completa" title="Pantalla completa (F)" onclick={toggleFullscreen}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg></button><button class="btn icon-action more-action" class:active={moreOpen} aria-label="Más opciones" title="Más opciones" aria-expanded={moreOpen} aria-controls="more-options" onclick={toggleMore}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button></div>
   </nav>
   <button class="show-controls" aria-label="Mostrar controles" onclick={() => controlsHidden = false}>⌃</button>
 
