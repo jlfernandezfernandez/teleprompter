@@ -1,17 +1,64 @@
-# Teleprompter de presentación
+# Teleprompter para presentaciones
 
-Teleprompter local, editable y sin backend. Incluye scroll automático, controles de velocidad y tamaño, navegación con teclado, pantalla completa y persistencia local.
+Teleprompter sencillo, editable y sin backend para acompañar presentaciones sin perder el contacto visual con la audiencia.
 
-## Desarrollo
+El texto permanece en el dispositivo y la aplicación funciona completamente en el navegador. No utiliza cuentas, servidores ni servicios externos.
+
+## Funciones
+
+- Texto grande con ancho de lectura cómodo.
+- Scroll automático opcional con reproducción y pausa.
+- Velocidad y tamaño de letra ajustables.
+- Edición directa del discurso.
+- Controles ocultables y modo de pantalla completa.
+- Navegación manual con teclado, ratón o pantalla táctil.
+- Preferencias y texto guardados mediante `localStorage`.
+- Diseño adaptable para escritorio y móvil.
+
+## Tecnologías
+
+El proyecto usa [Svelte](https://svelte.dev/), [Vite](https://vite.dev/) y TypeScript. Esta combinación mantiene la aplicación pequeña y fácil de mantener sin añadir infraestructura innecesaria.
+
+## Requisitos
+
+- Node.js 22 o posterior.
+- pnpm 11.
+
+## Ejecutar en local
 
 ```bash
-npm install
-npm run dev
+git clone https://github.com/jlfernandezfernandez/teleprompter-presentaciones.git
+cd teleprompter-presentaciones
+pnpm install
+pnpm dev
+```
+
+Abre la dirección local que muestra Vite, normalmente `http://localhost:5173`.
+
+## Comprobaciones
+
+```bash
+pnpm check
+pnpm build
 ```
 
 ## Atajos
 
-- `Espacio`: reproducir o pausar
-- `↑` / `↓`: navegar
-- `H`: ocultar controles
-- `F`: pantalla completa
+| Tecla | Acción |
+| --- | --- |
+| `Espacio` | Reproducir o pausar |
+| `↑` / `↓` | Navegar manualmente |
+| `H` | Ocultar o mostrar los controles |
+| `F` | Entrar o salir de pantalla completa |
+
+## Privacidad
+
+El discurso y las preferencias se guardan únicamente en el almacenamiento local del navegador. Al borrar los datos del sitio se elimina también esa información.
+
+## Contribuir
+
+Las propuestas y correcciones son bienvenidas. Consulta [CONTRIBUTING.md](CONTRIBUTING.md) antes de abrir un pull request.
+
+## Licencia
+
+Distribuido bajo la licencia MIT. Consulta [LICENSE](LICENSE).

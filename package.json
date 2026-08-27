@@ -2,6 +2,19 @@
   "name": "teleprompter-presentaciones",
   "private": true,
   "version": "1.0.0",
+  "description": "Teleprompter local y editable para presentaciones, con scroll automático y controles accesibles.",
+  "license": "MIT",
+  "author": "Jordi Fernandez",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jlfernandezfernandez/teleprompter-presentaciones.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jlfernandezfernandez/teleprompter-presentaciones/issues"
+  },
+  "homepage": "https://github.com/jlfernandezfernandez/teleprompter-presentaciones#readme",
+  "packageManager": "pnpm@11.19.0",
+  "engines": { "node": ">=22" },
   "type": "module",
   "scripts": {
     "dev": "vite",
