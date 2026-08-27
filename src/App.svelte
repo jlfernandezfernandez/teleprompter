@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { DEFAULT_SCRIPT } from './lib/defaultScript';
+  import { DEMO_SCRIPTS } from './lib/defaultScript';
+
+  const randomScript = () => DEMO_SCRIPTS[Math.floor(Math.random() * DEMO_SCRIPTS.length)];
 
   const KEYS = {
     text: 'teleprompter-text',
@@ -12,8 +14,9 @@
   };
   type Theme = 'system' | 'light' | 'dark';
   let reader: HTMLDivElement;
-  let text = DEFAULT_SCRIPT;
-  let draft = DEFAULT_SCRIPT;
+  let defaultScript = randomScript();
+  let text = defaultScript;
+  let draft = defaultScript;
   let speed = 1;
   let fontSize = 46;
   let readerWidth = 980;
@@ -35,7 +38,7 @@
 
   onMount(() => {
     const savedText = localStorage.getItem(KEYS.text);
-    text = savedText ?? DEFAULT_SCRIPT;
+    text = savedText ?? defaultScript;
     draft = text;
     speed = Number(localStorage.getItem(KEYS.speed)) || 1;
     fontSize = Number(localStorage.getItem(KEYS.font)) || 46;
