@@ -64,6 +64,7 @@
       if (event.code === 'Space') { event.preventDefault(); playing = !playing; closePopovers(); }
       else if (event.key.toLowerCase() === 'h') controlsHidden = !controlsHidden;
       else if (event.key.toLowerCase() === 'f') toggleFullscreen();
+      else if (event.key === 'Home') { event.preventDefault(); reset(); }
       else if (event.key === 'ArrowDown') { event.preventDefault(); move(innerHeight * .18); }
       else if (event.key === 'ArrowUp') { event.preventDefault(); move(-innerHeight * .18); }
     };
@@ -185,9 +186,7 @@
 
   {#if moreOpen}
     <section id="more-actions" class="popover more-menu" aria-label="Más acciones">
-      <button onclick={openEditor}><span>Editar texto</span><span aria-hidden="true">E</span></button>
       <button onclick={() => { reset(); closePopovers(); }}><span>Volver al inicio</span><span aria-hidden="true">↥</span></button>
-      <button onclick={() => { toggleFullscreen(); closePopovers(); }}><span>Pantalla completa</span><span aria-hidden="true">F</span></button>
       <button onclick={() => { controlsHidden = true; closePopovers(); }}><span>Ocultar controles</span><span aria-hidden="true">H</span></button>
     </section>
   {/if}
@@ -195,7 +194,7 @@
   <nav class="toolbar" aria-label="Controles del teleprompter">
     <div class="group"><button class="btn primary" class:active={playing} onclick={() => playing = !playing}>{playing ? 'Ⅱ  Pausa' : '▶  Iniciar'}</button></div>
     <div class="group"><button class="btn" aria-label="Más lento" onclick={() => changeSpeed(-.25)}>−</button><span class="value">{speed}×</span><button class="btn" aria-label="Más rápido" onclick={() => changeSpeed(.25)}>+</button></div>
-    <div class="group actions"><button class="btn labelled" class:active={settingsOpen} aria-expanded={settingsOpen} aria-controls="reading-settings" onclick={toggleSettings}><span aria-hidden="true">☷</span> Ajustes</button><button class="btn more" class:active={moreOpen} aria-label="Más acciones" aria-expanded={moreOpen} aria-controls="more-actions" onclick={toggleMore}>•••</button></div>
+    <div class="group actions"><button class="btn labelled edit-action" onclick={openEditor}><span aria-hidden="true">✎</span> Editar</button><button class="btn labelled settings-action" class:active={settingsOpen} aria-expanded={settingsOpen} aria-controls="reading-settings" onclick={toggleSettings}><span aria-hidden="true">⚙</span> Ajustes</button><button class="btn fullscreen-action" aria-label="Pantalla completa" title="Pantalla completa (F)" onclick={toggleFullscreen}>⛶</button><button class="btn more" class:active={moreOpen} aria-label="Más acciones" aria-expanded={moreOpen} aria-controls="more-actions" onclick={toggleMore}>•••</button></div>
   </nav>
   <button class="show-controls" aria-label="Mostrar controles" onclick={() => controlsHidden = false}>•••</button>
 

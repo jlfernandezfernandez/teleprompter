@@ -54,6 +54,7 @@ pnpm build
 | `↑` / `↓` | Navegar manualmente |
 | `H` | Ocultar o mostrar los controles |
 | `F` | Entrar o salir de pantalla completa |
+| `Inicio` | Volver al principio del discurso |
 
 ## Privacidad
 
