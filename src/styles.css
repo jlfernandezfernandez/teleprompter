@@ -27,8 +27,10 @@
 }
 * { box-sizing: border-box; }
 html, body, #app { height: 100%; height: 100dvh; margin: 0; overflow: hidden; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body { background: var(--bg); color: var(--text); transition: background .2s, color .2s; }
 button, textarea, input { font: inherit; color: inherit; }
+button { touch-action: manipulation; }
 button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .reader { position: fixed; inset: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; }
 .reader::-webkit-scrollbar { display: none; }
@@ -101,10 +103,10 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
   .group { margin-right: 4px; padding-right: 4px; }
   .btn { min-width: 44px; height: 44px; padding: 0 8px; }
   .btn.primary { min-width: 52px; width: 52px; height: 52px; padding: 0; }
-  .speed-controls { min-height: 52px; margin-right: 4px; padding: 4px 2px; border-radius: 14px; }
+  .speed-controls { width: 136px; min-height: 52px; margin-right: 4px; padding: 4px 2px; border-radius: 14px; }
   .speed-controls::after { display: none; }
   .play-label, .font-controls, .fullscreen-action { display: none; }
-  .value { min-width: 34px; }
+  .speed-controls .value { flex: 0 0 40px; width: 40px; min-width: 40px; }
   .actions { gap: 0; }
   .icon-action { width: 44px; padding: 0; }
   .script { width: calc(100vw - 32px); }
