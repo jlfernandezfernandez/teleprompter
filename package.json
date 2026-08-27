@@ -1,0 +1,32 @@
+{
+  "name": "teleprompter-presentaciones",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Teleprompter local y editable para presentaciones, con scroll automático y controles accesibles.",
+  "license": "MIT",
+  "author": "Jordi Fernandez",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jlfernandezfernandez/teleprompter-presentaciones.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jlfernandezfernandez/teleprompter-presentaciones/issues"
+  },
+  "homepage": "https://github.com/jlfernandezfernandez/teleprompter-presentaciones#readme",
+  "packageManager": "pnpm@11.19.0",
+  "engines": { "node": ">=22" },
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^6.2.0",
+    "svelte": "^5.43.0",
+    "svelte-check": "^4.3.0",
+    "typescript": "^5.9.0",
+    "vite": "^7.2.0"
+  }
+}
