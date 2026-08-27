@@ -37,11 +37,12 @@
     const savedText = readStorage(KEYS.text);
     text = savedText ?? DEFAULT_SCRIPT;
     draft = text;
-    speed = Number(readStorage(KEYS.speed)) || 1;
-    fontSize = Number(readStorage(KEYS.font)) || 46;
-    readerWidth = Number(readStorage(KEYS.width)) || 980;
-    lineHeight = Number(readStorage(KEYS.lineHeight)) || 1.5;
-    theme = (readStorage(KEYS.theme) as Theme | null) || 'system';
+    speed = clamp(Number(readStorage(KEYS.speed)) || 1, .25, 3);
+    fontSize = clamp(Number(readStorage(KEYS.font)) || 46, 28, 76);
+    readerWidth = clamp(Number(readStorage(KEYS.width)) || 980, 480, 1280);
+    lineHeight = clamp(Number(readStorage(KEYS.lineHeight)) || 1.5, 1.25, 1.9);
+    const savedTheme = readStorage(KEYS.theme);
+    theme = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'system';
     fullscreenSupported = document.fullscreenEnabled && typeof document.documentElement.requestFullscreen === 'function';
     document.documentElement.dataset.theme = theme;
 
@@ -64,11 +65,14 @@
     frame = requestAnimationFrame(tick);
 
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') { editing = false; closePopovers(); return; }
+      if (event.key === 'Escape') { editing = false; dismissPopovers(); return; }
       if (editing) return;
       if (event.target instanceof HTMLInputElement || event.target instanceof HTMLButtonElement) return;
       if (event.code === 'Space') { event.preventDefault(); togglePlayback(); }
-      else if (event.key.toLowerCase() === 'h') controlsHidden = !controlsHidden;
+      else if (event.key.toLowerCase() === 'h') {
+        if (controlsHidden) showControlsTemporarily();
+        else { controlsHidden = true; closePopovers(); }
+      }
       else if (event.key.toLowerCase() === 'f') toggleFullscreen();
       else if (event.key === 'Home') { event.preventDefault(); reset(); }
       else if (event.key === 'ArrowDown') { event.preventDefault(); move(innerHeight * .18); }
@@ -92,6 +96,9 @@
     if (!reader) return;
     const distance = Math.max(0, reader.scrollHeight - reader.clientHeight);
     progress = distance ? Math.min(1, Math.max(0, reader.scrollTop / distance)) : 0;
+  }
+  function clamp(value: number, minimum: number, maximum: number) {
+    return Math.min(maximum, Math.max(minimum, value));
   }
   function readStorage(key: string) {
     try { return localStorage.getItem(key); } catch { return null; }
@@ -147,13 +154,21 @@
     settingsOpen = false;
     moreOpen = false;
   }
+  function dismissPopovers() {
+    closePopovers();
+    if (playing) showControlsTemporarily();
+  }
   function toggleSettings() {
+    showControls();
     settingsOpen = !settingsOpen;
     moreOpen = false;
+    if (!settingsOpen && playing) showControlsTemporarily();
   }
   function toggleMore() {
+    showControls();
     moreOpen = !moreOpen;
     settingsOpen = false;
+    if (!moreOpen && playing) showControlsTemporarily();
   }
   function move(amount: number) {
     playing = false;
@@ -167,6 +182,7 @@
   }
   function openEditor() {
     playing = false;
+    showControls();
     closePopovers();
     draft = text;
     editing = true;
@@ -205,12 +221,12 @@
   <output class="completion" aria-label={`${Math.round(progress * 100)}% completado`} aria-live="off">{Math.round(progress * 100)}%</output>
 
   {#if settingsOpen || moreOpen}
-    <button class="popover-dismiss" aria-label="Cerrar menú" onclick={closePopovers}></button>
+    <button class="popover-dismiss" aria-label="Cerrar menú" onclick={dismissPopovers}></button>
   {/if}
 
   {#if settingsOpen}
-    <section id="reading-settings" class="popover settings" aria-label="Ajustes de lectura">
-      <header><strong>Ajustes de lectura</strong><button class="popover-close" aria-label="Cerrar ajustes" onclick={closePopovers}>✕</button></header>
+    <div id="reading-settings" class="popover settings" role="dialog" aria-label="Ajustes de lectura">
+      <header><strong>Ajustes de lectura</strong><button class="popover-close" aria-label="Cerrar ajustes" onclick={dismissPopovers}>✕</button></header>
       <label>
         <span><span>Tamaño del texto</span><output>{fontSize} px</output></span>
         <input type="range" min="28" max="76" step="2" value={fontSize} oninput={(event) => { fontSize = Number(event.currentTarget.value); writeStorage(KEYS.font, String(fontSize)); }} />
@@ -232,15 +248,15 @@
         </div>
       </fieldset>
       <button class="reset-settings" onclick={resetReadingSettings}>Restablecer</button>
-    </section>
+    </div>
   {/if}
 
   {#if moreOpen}
-    <section id="more-options" class="popover more-options" aria-label="Más opciones">
-      <button onclick={openEditor}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"/></svg><span>Editar texto</span></button>
-      <button onclick={() => { reset(); closePopovers(); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v6h6"/><path d="M5.5 16a8 8 0 1 0 .3-8.3L4 10"/></svg><span>Volver al inicio</span></button>
-      <button onclick={() => { controlsHidden = true; closePopovers(); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8M9.9 4.2A10.8 10.8 0 0 1 12 4c5 0 8.5 4 9.5 6.2M6.2 6.2a13.3 13.3 0 0 0-3.7 4 4 4 0 0 0 0 3.6C3.5 16 7 20 12 20a10.7 10.7 0 0 0 4-.8"/></svg><span>Ocultar controles</span></button>
-    </section>
+    <div id="more-options" class="popover more-options" role="menu" aria-label="Más opciones">
+      <button role="menuitem" onclick={openEditor}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"/></svg><span>Editar texto</span></button>
+      <button role="menuitem" onclick={() => { reset(); closePopovers(); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v6h6"/><path d="M5.5 16a8 8 0 1 0 .3-8.3L4 10"/></svg><span>Volver al inicio</span></button>
+      <button role="menuitem" onclick={() => { controlsHidden = true; closePopovers(); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8M9.9 4.2A10.8 10.8 0 0 1 12 4c5 0 8.5 4 9.5 6.2M6.2 6.2a13.3 13.3 0 0 0-3.7 4 4 4 0 0 0 0 3.6C3.5 16 7 20 12 20a10.7 10.7 0 0 0 4-.8"/></svg><span>Ocultar controles</span></button>
+    </div>
   {/if}
 
   <nav class="toolbar" aria-label="Controles del teleprompter">
@@ -249,7 +265,7 @@
     <div class="group font-controls"><button class="btn text-size" aria-label="Reducir tamaño del texto" onclick={() => changeFont(-2)}>A−</button><span class="value font-value">{fontSize}</span><button class="btn text-size" aria-label="Aumentar tamaño del texto" onclick={() => changeFont(2)}>A+</button></div>
     <div class="group actions"><button class="btn icon-action" class:active={settingsOpen} aria-label="Ajustes de lectura" title="Ajustes de lectura" aria-expanded={settingsOpen} aria-controls="reading-settings" onclick={toggleSettings}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h5M15 6h5M4 12h9M19 12h1M4 18h2M12 18h8"/><circle cx="12" cy="6" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="9" cy="18" r="2"/></svg></button>{#if fullscreenSupported}<button class="btn icon-action fullscreen-action" aria-label="Pantalla completa" title="Pantalla completa (F)" onclick={toggleFullscreen}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg></button>{/if}<button class="btn icon-action more-action" class:active={moreOpen} aria-label="Más opciones" title="Más opciones" aria-expanded={moreOpen} aria-controls="more-options" onclick={toggleMore}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button></div>
   </nav>
-  <button class="show-controls" aria-label="Mostrar controles" onclick={() => controlsHidden = false}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 14 5-5 5 5"/></svg></button>
+  <button class="show-controls" aria-label="Mostrar controles" onclick={showControlsTemporarily}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 14 5-5 5 5"/></svg></button>
 
   {#if editing}
     <div class="modal" role="dialog" aria-modal="true" aria-label="Editar discurso">
