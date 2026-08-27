@@ -50,15 +50,23 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
 .btn.primary:hover { filter: brightness(.94); }
 .btn.labelled { display: flex; align-items: center; gap: 7px; }
 .btn.labelled span { font-size: 17px; }
-.hide-icon { display: none; font-size: 20px; }
-.value { min-width: 48px; text-align: center; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
-.show-controls { position: fixed; z-index: 11; right: 13px; bottom: 13px; width: 44px; height: 44px; border: 1px solid var(--border); border-radius: 50%; background: var(--surface); color: var(--text); cursor: pointer; opacity: 0; pointer-events: none; }
+.value { min-width: 44px; text-align: center; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.font-value { min-width: 30px; }
+.text-size { font-size: 13px; font-weight: 650; }
+.sliders { font-size: 24px; transform: rotate(90deg); }
+.more-action { font-size: 16px; letter-spacing: 2px; }
+.show-controls { position: fixed; z-index: 11; left: 50%; bottom: 8px; transform: translate(-50%,12px); width: 44px; height: 32px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); color: var(--text); cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
 .controls-hidden .show-controls { opacity: .78; pointer-events: auto; }
+.controls-hidden .show-controls { transform: translateX(-50%); }
 .hint { position: fixed; z-index: 5; top: 18px; left: 50%; transform: translateX(-50%); color: var(--faint); font-size: 12px; white-space: nowrap; }
 .controls-hidden .hint { opacity: 0; }
 .popover-dismiss { position: fixed; z-index: 8; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: transparent; cursor: default; }
 .popover { position: fixed; z-index: 12; bottom: 86px; padding: 16px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); box-shadow: 0 18px 54px var(--shadow); backdrop-filter: blur(18px); }
 .settings { left: 50%; width: min(370px, calc(100vw - 24px)); transform: translateX(-50%); }
+.more-options { right: 22px; width: 230px; padding: 6px; }
+.more-options button { width: 100%; min-height: 44px; display: flex; align-items: center; gap: 11px; padding: 0 12px; border: 0; border-radius: 9px; background: transparent; color: var(--text); cursor: pointer; text-align: left; font-size: 14px; }
+.more-options button:hover { background: var(--hover); }
+.more-options button span:first-child { width: 22px; color: var(--muted); text-align: center; font-size: 18px; }
 .popover header, .popover label > span { display: flex; align-items: center; justify-content: space-between; }
 .popover header { margin-bottom: 16px; }
 .popover header strong { font-size: 15px; }
@@ -85,17 +93,16 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
 .editor textarea { flex: 1; width: 100%; resize: none; border: 0; outline: 0; padding: 24px; background: transparent; color: var(--text); font-size: 18px; line-height: 1.6; }
 .editor .save { background: var(--primary); color: var(--primary-text); font-weight: 700; }
 @media (max-width: 640px) {
-  .toolbar { width: calc(100vw - 16px); max-width: 390px; bottom: 10px; flex-wrap: wrap; justify-content: center; }
-  .actions { width: 100%; justify-content: center; }
+  .toolbar { width: max-content; max-width: calc(100vw - 16px); bottom: 10px; gap: 4px; }
+  .group { padding-right: 4px; }
   .btn { padding: 0 9px; }
-  .btn.primary { min-width: 96px; }
-  .btn.labelled { font-size: 0; gap: 0; }
-  .btn.labelled span { font-size: 17px; }
-  .hide-label { display: none; }
-  .hide-icon { display: inline; }
+  .btn.primary { min-width: 52px; padding: 0; }
+  .play-label, .font-controls, .fullscreen-action { display: none; }
+  .value { min-width: 34px; }
   .script { width: calc(100vw - 32px); }
-  .popover { bottom: 126px; }
+  .popover { bottom: 76px; }
   .settings { width: calc(100vw - 16px); }
+  .more-options { right: 8px; }
   .hint { display: none; }
   .editor .autosave { max-width: 190px; }
 }
