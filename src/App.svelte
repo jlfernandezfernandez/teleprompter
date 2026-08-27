@@ -21,7 +21,6 @@
   let playing = false;
   let controlsHidden = false;
   let settingsOpen = false;
-  let moreOpen = false;
   let theme: Theme = 'system';
   let editing = false;
 
@@ -59,7 +58,7 @@
     frame = requestAnimationFrame(tick);
 
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') { editing = false; settingsOpen = false; moreOpen = false; return; }
+      if (event.key === 'Escape') { editing = false; settingsOpen = false; return; }
       if (editing) return;
       if (event.code === 'Space') { event.preventDefault(); playing = !playing; closePopovers(); }
       else if (event.key.toLowerCase() === 'h') controlsHidden = !controlsHidden;
@@ -101,15 +100,9 @@
   }
   function closePopovers() {
     settingsOpen = false;
-    moreOpen = false;
   }
   function toggleSettings() {
     settingsOpen = !settingsOpen;
-    moreOpen = false;
-  }
-  function toggleMore() {
-    moreOpen = !moreOpen;
-    settingsOpen = false;
   }
   function move(amount: number) {
     playing = false;
@@ -153,7 +146,7 @@
   <div class="shade bottom" aria-hidden="true"></div>
   <div class="hint">Espacio: reproducir/pausar · ↑↓: navegar · H: ocultar · F: pantalla completa</div>
 
-  {#if settingsOpen || moreOpen}
+  {#if settingsOpen}
     <button class="popover-dismiss" aria-label="Cerrar menú" onclick={closePopovers}></button>
   {/if}
 
@@ -184,17 +177,10 @@
     </section>
   {/if}
 
-  {#if moreOpen}
-    <section id="more-actions" class="popover more-menu" aria-label="Más acciones">
-      <button onclick={() => { reset(); closePopovers(); }}><span>Volver al inicio</span><span aria-hidden="true">↥</span></button>
-      <button onclick={() => { controlsHidden = true; closePopovers(); }}><span>Ocultar controles</span><span aria-hidden="true">H</span></button>
-    </section>
-  {/if}
-
   <nav class="toolbar" aria-label="Controles del teleprompter">
     <div class="group"><button class="btn primary" class:active={playing} onclick={() => playing = !playing}>{playing ? 'Ⅱ  Pausa' : '▶  Iniciar'}</button></div>
     <div class="group"><button class="btn" aria-label="Más lento" onclick={() => changeSpeed(-.25)}>−</button><span class="value">{speed}×</span><button class="btn" aria-label="Más rápido" onclick={() => changeSpeed(.25)}>+</button></div>
-    <div class="group actions"><button class="btn labelled edit-action" onclick={openEditor}><span aria-hidden="true">✎</span> Editar</button><button class="btn labelled settings-action" class:active={settingsOpen} aria-expanded={settingsOpen} aria-controls="reading-settings" onclick={toggleSettings}><span aria-hidden="true">⚙</span> Ajustes</button><button class="btn fullscreen-action" aria-label="Pantalla completa" title="Pantalla completa (F)" onclick={toggleFullscreen}>⛶</button><button class="btn more" class:active={moreOpen} aria-label="Más acciones" aria-expanded={moreOpen} aria-controls="more-actions" onclick={toggleMore}>•••</button></div>
+    <div class="group actions"><button class="btn labelled edit-action" onclick={openEditor}><span aria-hidden="true">✎</span> Editar</button><button class="btn labelled settings-action" class:active={settingsOpen} aria-expanded={settingsOpen} aria-controls="reading-settings" onclick={toggleSettings}><span aria-hidden="true">⚙</span> Ajustes</button><button class="btn icon-action" aria-label="Volver al inicio" title="Volver al inicio (Inicio)" onclick={reset}>↥</button><button class="btn icon-action" aria-label="Pantalla completa" title="Pantalla completa (F)" onclick={toggleFullscreen}>⛶</button><button class="btn hide-action" aria-label="Ocultar controles" title="Ocultar controles (H)" onclick={() => { controlsHidden = true; closePopovers(); }}><span class="hide-label">Ocultar</span><span class="hide-icon" aria-hidden="true">⌄</span></button></div>
   </nav>
   <button class="show-controls" aria-label="Mostrar controles" onclick={() => controlsHidden = false}>•••</button>
 
