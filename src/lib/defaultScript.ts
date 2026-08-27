@@ -1,5 +1,4 @@
-export const DEMO_SCRIPTS = [
-  `Buenos días a todos y gracias por acompañarnos.
+export const DEFAULT_SCRIPT = `Buenos días a todos y gracias por acompañarnos.
 
 Hoy queremos compartir con vosotros en qué hemos estado trabajando estos últimos meses.
 
@@ -15,24 +14,4 @@ Y aunque todavía nos queda mucho por delante, el rumbo está claro.
 
 Gracias por vuestra atención y por el tiempo que nos dedicáis hoy.
 
-Ahora sí, comencemos.`,
-  `Hablemos de por qué hemos construido esto.
-
-En los últimos años hemos visto cómo la tecnología cambia la forma en que trabajamos y colaboramos.
-
-Nuestra misión ha sido crear una herramienta que simplifique una tarea que antes era compleja y lenta.
-
-Queríamos que cualquiera pudiera utilizarla sin necesidad de formación ni de conocimientos técnicos.
-
-Eso nos ha obligado a simplificar, a eliminar lo innecesario y a centrarnos en lo esencial.
-
-Cada decisión de diseño se ha tomado pensando en la persona que la va a usar cada día.
-
-La simplicidad no es un punto de partida, sino un objetivo que se consigue con esfuerzo.
-
-Hoy podemos decir que ese objetivo está cada vez más cerca.
-
-Os invitamos a probarlo y a contarnos qué mejoraríais.
-
-Muchas gracias.`
-];
+Ahora sí, comencemos.`;

@@ -12,7 +12,7 @@ Un teleprompter web rápido y sin distracciones. Pega o edita tu guion, adapta l
 
 - Texto grande con ancho de lectura cómodo.
 - Scroll automático opcional con reproducción y pausa.
-- Tiempo restante estimado y progreso de lectura.
+- Porcentaje completado siempre visible.
 - Velocidad y tamaño de letra ajustables.
 - Ancho de lectura y espaciado entre líneas ajustables.
 - Temas automático, claro y oscuro.
@@ -21,6 +21,10 @@ Un teleprompter web rápido y sin distracciones. Pega o edita tu guion, adapta l
 - Navegación manual con teclado, ratón o pantalla táctil.
 - Texto y preferencias guardados automáticamente mediante `localStorage`, incluso al cerrar el navegador.
 - Diseño adaptable para escritorio y móvil.
+
+## Compatibilidad
+
+Funciona en las versiones actuales de Chrome, Edge, Firefox y Safari, tanto en escritorio como en móvil y iPad. El modo de pantalla completa solo aparece cuando el navegador ofrece esa capacidad; Safari en iPhone puede no permitirla para páginas web normales.
 
 ## Tecnologías
 
@@ -61,7 +65,7 @@ pnpm build
 
 ## Privacidad
 
-El discurso y las preferencias se guardan únicamente en el almacenamiento local del navegador. Al borrar los datos del sitio se elimina también esa información.
+El discurso y las preferencias se guardan únicamente en el almacenamiento local del navegador. Al borrar los datos del sitio se elimina también esa información. En navegación privada, los navegadores eliminan estos datos al cerrar la sesión privada.
 
 ## Contribuir
 
