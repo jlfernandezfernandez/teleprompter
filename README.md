@@ -12,6 +12,7 @@ El texto permanece en el dispositivo y la aplicación funciona completamente en 
 - Scroll automático opcional con reproducción y pausa.
 - Velocidad y tamaño de letra ajustables.
 - Ancho de lectura y espaciado entre líneas ajustables.
+- Temas automático, claro y oscuro.
 - Edición directa del discurso.
 - Controles ocultables y modo de pantalla completa.
 - Navegación manual con teclado, ratón o pantalla táctil.
