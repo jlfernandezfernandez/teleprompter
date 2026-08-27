@@ -39,7 +39,7 @@
     draft = text;
     speed = clamp(Number(readStorage(KEYS.speed)) || 1, .25, 3);
     fontSize = clamp(Number(readStorage(KEYS.font)) || 46, 28, 76);
-    readerWidth = clamp(Number(readStorage(KEYS.width)) || 980, 480, 1280);
+    readerWidth = clamp(Number(readStorage(KEYS.width)) || 980, 480, 1800);
     lineHeight = clamp(Number(readStorage(KEYS.lineHeight)) || 1.5, 1.25, 1.9);
     const savedTheme = readStorage(KEYS.theme);
     theme = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'system';
@@ -233,7 +233,7 @@
       </label>
       <label>
         <span><span>Ancho del texto</span><output>{readerWidth} px</output></span>
-        <input type="range" min="480" max="1280" step="20" value={readerWidth} oninput={(event) => changeReaderWidth(Number(event.currentTarget.value))} />
+        <input type="range" min="480" max="1800" step="20" value={readerWidth} oninput={(event) => changeReaderWidth(Number(event.currentTarget.value))} />
       </label>
       <label>
         <span><span>Espaciado de líneas</span><output>{lineHeight.toFixed(2)}×</output></span>
