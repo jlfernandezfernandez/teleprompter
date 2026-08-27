@@ -202,7 +202,7 @@
   <div class="shade top" aria-hidden="true"></div>
   <div class="shade bottom" aria-hidden="true"></div>
   <div class="hint">Espacio: reproducir/pausar · ↑↓: navegar · H: ocultar · F: pantalla completa</div>
-  <output class="completion" aria-live="off">{Math.round(progress * 100)}% completado</output>
+  <output class="completion" aria-label={`${Math.round(progress * 100)}% completado`} aria-live="off">{Math.round(progress * 100)}%</output>
 
   {#if settingsOpen || moreOpen}
     <button class="popover-dismiss" aria-label="Cerrar menú" onclick={closePopovers}></button>

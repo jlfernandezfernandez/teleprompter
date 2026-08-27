@@ -12,7 +12,7 @@ Un teleprompter web rápido y sin distracciones. Pega o edita tu guion, adapta l
 
 - Texto grande con ancho de lectura cómodo.
 - Scroll automático opcional con reproducción y pausa.
-- Porcentaje completado siempre visible.
+- Porcentaje de avance siempre visible.
 - Velocidad y tamaño de letra ajustables.
 - Ancho de lectura y espaciado entre líneas ajustables.
 - Temas automático, claro y oscuro.
