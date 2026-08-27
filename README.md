@@ -4,6 +4,8 @@ Teleprompter sencillo, editable y sin backend para acompañar presentaciones sin
 
 El texto permanece en el dispositivo y la aplicación funciona completamente en el navegador. No utiliza cuentas, servidores ni servicios externos.
 
+**[Abrir el teleprompter](https://jlfernandezfernandez.github.io/teleprompter-presentaciones/)**
+
 ## Funciones
 
 - Texto grande con ancho de lectura cómodo.
@@ -12,7 +14,7 @@ El texto permanece en el dispositivo y la aplicación funciona completamente en 
 - Edición directa del discurso.
 - Controles ocultables y modo de pantalla completa.
 - Navegación manual con teclado, ratón o pantalla táctil.
-- Preferencias y texto guardados mediante `localStorage`.
+- Texto y preferencias guardados automáticamente mediante `localStorage`, incluso al cerrar el navegador.
 - Diseño adaptable para escritorio y móvil.
 
 ## Tecnologías

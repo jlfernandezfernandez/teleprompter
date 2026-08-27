@@ -18,7 +18,8 @@
   const isStrong = (value: string) => value.startsWith('**') && value.endsWith('**');
 
   onMount(() => {
-    text = localStorage.getItem(KEYS.text) || DEFAULT_SCRIPT;
+    const savedText = localStorage.getItem(KEYS.text);
+    text = savedText ?? DEFAULT_SCRIPT;
     draft = text;
     speed = Number(localStorage.getItem(KEYS.speed)) || 1;
     fontSize = Number(localStorage.getItem(KEYS.font)) || 46;
@@ -73,10 +74,10 @@
     draft = text;
     editing = true;
   }
-  function save() {
-    text = draft.trim() || DEFAULT_SCRIPT;
-    localStorage.setItem(KEYS.text, text);
-    editing = false;
+  function updateDraft(value: string) {
+    draft = value;
+    text = value;
+    localStorage.setItem(KEYS.text, value);
   }
   function toggleFullscreen() {
     document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
@@ -113,8 +114,8 @@
     <div class="modal" role="dialog" aria-modal="true" aria-label="Editar discurso">
       <section class="editor">
         <header><h2>Editar discurso</h2><button class="btn" aria-label="Cerrar" onclick={() => editing = false}>✕</button></header>
-        <textarea bind:value={draft} spellcheck="true" aria-label="Texto del discurso"></textarea>
-        <footer><button class="btn" onclick={() => editing = false}>Cancelar</button><button class="btn save" onclick={save}>Guardar cambios</button></footer>
+        <textarea value={draft} oninput={(event) => updateDraft(event.currentTarget.value)} spellcheck="true" aria-label="Texto del discurso"></textarea>
+        <footer><span class="autosave">Guardado automáticamente en este navegador</span><button class="btn save" onclick={() => editing = false}>Listo</button></footer>
       </section>
     </div>
   {/if}
