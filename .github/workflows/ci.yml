@@ -25,6 +25,8 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Test reading behavior
+        run: pnpm test
       - name: Check types and Svelte
         run: pnpm check
       - name: Build

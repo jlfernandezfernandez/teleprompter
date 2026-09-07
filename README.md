@@ -16,7 +16,9 @@ Un teleprompter web rápido y sin distracciones. Pega o edita tu guion, adapta l
 - Velocidad y tamaño de letra ajustables.
 - Ancho de lectura y espaciado entre líneas ajustables.
 - Temas automático, claro y oscuro.
-- Edición directa del discurso.
+- Biblioteca local: crear, elegir, renombrar y eliminar guiones. Conserva el discurso guardado en versiones anteriores.
+- Preparación opcional de 3 segundos antes de empezar.
+- Mantiene la pantalla despierta durante la lectura cuando el navegador lo permite.
 - Controles ocultables y modo de pantalla completa.
 - Navegación manual con teclado, ratón o pantalla táctil.
 - Texto y preferencias guardados automáticamente mediante `localStorage`, incluso al cerrar el navegador.
@@ -49,6 +51,7 @@ Abre la dirección local que muestra Vite, normalmente `http://localhost:5173`.
 ## Comprobaciones
 
 ```bash
+pnpm test
 pnpm check
 pnpm build
 ```

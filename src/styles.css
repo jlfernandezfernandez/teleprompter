@@ -117,3 +117,7 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
   .editor .autosave { max-width: 190px; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition-duration: 0s !important; } }
+
+.countdown { position: fixed; z-index: 15; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg); gap: 20px; }
+.countdown > span { font-size: clamp(80px, 20vw, 180px); font-weight: 700; font-variant-numeric: tabular-nums; }
+.countdown-setting input { accent-color: var(--accent); margin-right: 6px; }
