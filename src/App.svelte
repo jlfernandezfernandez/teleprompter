@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import { DEFAULT_SCRIPT } from './lib/defaultScript';
   import ScriptEditor from './ScriptEditor.svelte';
   import { parseLibrary, type ScriptLibrary } from './lib/scripts';
@@ -18,8 +18,9 @@
   };
   type Theme = 'system' | 'light' | 'dark';
   let reader: HTMLDivElement;
+  let moreButton: HTMLButtonElement;
   let text = DEFAULT_SCRIPT;
-  let library = parseLibrary(null, DEFAULT_SCRIPT);
+  let library = parseLibrary(null, DEFAULT_SCRIPT).library;
   let saved = true;
   let preparation = false;
   let remaining = 0;
@@ -50,7 +51,9 @@
 
   onMount(() => {
     const savedText = readStorage(KEYS.text);
-    library = parseLibrary(readStorage(KEYS.library), savedText ?? DEFAULT_SCRIPT);
+    const parsedLibrary = parseLibrary(readStorage(KEYS.library), savedText ?? DEFAULT_SCRIPT);
+    library = parsedLibrary.library;
+    if (parsedLibrary.recovered) saved = false;
     text = library.scripts.find(script => script.id === library.activeId)!.text;
     preparation = readStorage(KEYS.countdown) === 'true';
     speed = clamp(Number(readStorage(KEYS.speed)) || 1, .25, 3);
@@ -81,7 +84,7 @@
     frame = requestAnimationFrame(tick);
 
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') { editing = false; dismissPopovers(); return; }
+      if (event.key === 'Escape') { if (!editing) dismissPopovers(); return; }
       if (editing) return;
       if (event.target instanceof HTMLInputElement || event.target instanceof HTMLButtonElement) return;
       if (event.code === 'Space') { event.preventDefault(); togglePlayback(); }
@@ -214,6 +217,11 @@
     closePopovers();
     editing = true;
   }
+  async function closeEditor() {
+    editing = false;
+    await tick();
+    moreButton.focus();
+  }
   function updateLibrary(next: ScriptLibrary) {
     const changedScript = next.activeId !== library.activeId;
     library = next;
@@ -298,11 +306,11 @@
     <div class="group play-group"><button class="btn primary" class:active={playing} aria-label={remaining ? 'Cancelar cuenta atrás' : playing ? 'Pausar desplazamiento' : 'Iniciar desplazamiento'} aria-pressed={playing} onclick={togglePlayback}>{#if playing}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14M15 5v14" /></svg>{:else}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7Z" /></svg>{/if}<span class="play-label">{remaining ? 'Cancelar' : playing ? 'Pausa' : 'Iniciar'}</span></button></div>
     <div class="group speed-controls"><button class="btn" aria-label="Más lento" onclick={() => changeSpeed(-.25)}>−</button><span class="value">{speed}×</span><button class="btn" aria-label="Más rápido" onclick={() => changeSpeed(.25)}>+</button></div>
     <div class="group font-controls"><button class="btn text-size" aria-label="Reducir tamaño del texto" onclick={() => changeFont(-2)}>A−</button><span class="value font-value">{fontSize}</span><button class="btn text-size" aria-label="Aumentar tamaño del texto" onclick={() => changeFont(2)}>A+</button></div>
-    <div class="group actions"><button class="btn icon-action" class:active={settingsOpen} aria-label="Ajustes de lectura" title="Ajustes de lectura" aria-expanded={settingsOpen} aria-controls="reading-settings" onclick={toggleSettings}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h5M15 6h5M4 12h9M19 12h1M4 18h2M12 18h8"/><circle cx="12" cy="6" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="9" cy="18" r="2"/></svg></button>{#if fullscreenSupported}<button class="btn icon-action fullscreen-action" aria-label="Pantalla completa" title="Pantalla completa (F)" onclick={toggleFullscreen}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg></button>{/if}<button class="btn icon-action more-action" class:active={moreOpen} aria-label="Más opciones" title="Más opciones" aria-expanded={moreOpen} aria-controls="more-options" onclick={toggleMore}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button></div>
+    <div class="group actions"><button class="btn icon-action" class:active={settingsOpen} aria-label="Ajustes de lectura" title="Ajustes de lectura" aria-expanded={settingsOpen} aria-controls="reading-settings" onclick={toggleSettings}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h5M15 6h5M4 12h9M19 12h1M4 18h2M12 18h8"/><circle cx="12" cy="6" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="9" cy="18" r="2"/></svg></button>{#if fullscreenSupported}<button class="btn icon-action fullscreen-action" aria-label="Pantalla completa" title="Pantalla completa (F)" onclick={toggleFullscreen}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg></button>{/if}<button bind:this={moreButton} class="btn icon-action more-action" class:active={moreOpen} aria-label="Más opciones" title="Más opciones" aria-expanded={moreOpen} aria-controls="more-options" onclick={toggleMore}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button></div>
   </nav>
   <button class="show-controls" aria-label="Mostrar controles" onclick={showControlsTemporarily}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 14 5-5 5 5"/></svg></button>
 
   {#if editing}
-    <ScriptEditor {library} {saved} onchange={updateLibrary} onclose={() => editing = false} />
+    <ScriptEditor {library} {saved} onchange={updateLibrary} onclose={closeEditor} />
   {/if}
 </main>

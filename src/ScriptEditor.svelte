@@ -25,9 +25,9 @@
   }
 </script>
 
-<dialog bind:this={dialog} class="script-editor" aria-labelledby="editor-title" oncancel={onclose}>
+<dialog bind:this={dialog} class="script-editor" aria-labelledby="editor-title" onclose={onclose}>
   <section class="editor">
-    <header><h2 id="editor-title">Mis guiones</h2><button class="btn" aria-label="Cerrar" onclick={onclose}>✕</button></header>
+    <header><h2 id="editor-title">Mis guiones</h2><button class="btn" aria-label="Cerrar" onclick={() => dialog.close()}>✕</button></header>
     <div class="library-controls">
       <label>Guion
         <select value={library.activeId} onchange={(event) => onchange({ ...library, activeId: event.currentTarget.value })}>
@@ -43,7 +43,7 @@
     <textarea value={current.text} oninput={(event) => edit({ text: event.currentTarget.value })} spellcheck="true" aria-label="Texto del discurso"></textarea>
     <footer>
       <span class="autosave" role="status">{saved ? 'Guardado en este navegador' : 'Sin guardar en el navegador. Copia tu texto antes de cerrar la página.'}</span>
-      <button class="btn save" onclick={onclose}>Listo</button>
+      <button class="btn save" onclick={() => dialog.close()}>Listo</button>
     </footer>
   </section>
 </dialog>

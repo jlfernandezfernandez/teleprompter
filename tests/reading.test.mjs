@@ -5,17 +5,20 @@ import { startCountdown } from '../src/lib/countdown.ts';
 import { keepScreenAwake } from '../src/lib/wakeLock.ts';
 
 test('an existing saved speech becomes the first script without losing empty text', () => {
-  assert.equal(parseLibrary(null, 'Mi discurso').scripts[0].text, 'Mi discurso');
-  assert.equal(parseLibrary(null, '').scripts[0].text, '');
+  assert.equal(parseLibrary(null, 'Mi discurso').library.scripts[0].text, 'Mi discurso');
+  assert.equal(parseLibrary(null, '').library.scripts[0].text, '');
   const raw = '{"activeId":"b","scripts":[{"id":"a","name":"Uno","text":"A"},{"id":"b","name":"Dos","text":"B"}]}';
-  assert.equal(parseLibrary(raw, 'legacy').activeId, 'b');
-  assert.equal(parseLibrary(raw, 'legacy').scripts[1].text, 'B');
+  assert.equal(parseLibrary(raw, 'legacy').library.activeId, 'b');
+  assert.equal(parseLibrary(raw, 'legacy').library.scripts[1].text, 'B');
 });
 
-test('corrupt or invalid library falls back to the old speech', () => {
+test('corrupt or invalid stored library reports recovery of the old speech', () => {
   for (const raw of ['{', '{}', '{"activeId":"a","scripts":[]}', '{"activeId":"a","scripts":[{"id":"a","text":12}]}']) {
-    assert.equal(parseLibrary(raw, 'Recuperado').scripts[0].text, 'Recuperado');
+    const parsed = parseLibrary(raw, 'Recuperado');
+    assert.equal(parsed.library.scripts[0].text, 'Recuperado');
+    assert.equal(parsed.recovered, true);
   }
+  assert.equal(parseLibrary(null, 'Primero').recovered, false);
 });
 
 test('countdown waits three seconds and cancellation prevents playback', (t) => {
